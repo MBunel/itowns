@@ -3,6 +3,7 @@ import Fetcher from './Fetcher';
 import PointCloudProcessing from '../Process/PointCloudProcessing';
 import PotreeBinParser from '../Parser/PotreeBinParser';
 import PotreeCinParser from '../Parser/PotreeCinParser';
+import { MODE } from '../Renderer/PointsMaterial';
 import Picking from '../Core/Picking';
 
 // Create an A(xis)A(ligned)B(ounding)B(ox) for the child `childIndex` of one aabb.
@@ -138,7 +139,7 @@ function loadPointFile(layer, url) {
         if (layer.metadata.customBinFormat) {
             return PotreeCinParser.parse(ab).then(result => addPickingAttribute(result));
         } else {
-            return PotreeBinParser.parse(ab).then(result => addPickingAttribute(result));
+            return PotreeBinParser.parse(ab, layer.metadata.pointAttributes).then(result => addPickingAttribute(result));
         }
     });
 }
@@ -168,6 +169,7 @@ export default {
         layer.pointSize = layer.pointSize === 0 || !isNaN(layer.pointSize) ? layer.pointSize : 4;
         layer.sseThreshold = layer.sseThreshold || 2;
         layer.type = 'geometry';
+        layer.mode = MODE.COLOR;
 
         // default update methods
         layer.preUpdate = PointCloudProcessing.preUpdate;

@@ -164,9 +164,8 @@ export default {
         if (elt.numPoints > 0) {
             if (elt.obj) {
                 elt.obj.material.visible = true;
-                elt.obj.material.size = layer.pointSize;
                 if (elt.obj.material.updateUniforms) {
-                    elt.obj.material.updateUniforms();
+                    elt.obj.material.updateUniforms(layer);
                 }
                 if (__DEBUG__) {
                     if (layer.bboxes.visible) {

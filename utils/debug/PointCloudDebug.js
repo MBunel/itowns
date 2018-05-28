@@ -1,3 +1,5 @@
+import { MODE } from '../../src/Renderer/PointsMaterial';
+
 function isInHierarchy(elt, hierarchyNode) {
     if (elt.name.length > hierarchyNode.length) {
         return elt.name.startsWith(hierarchyNode);
@@ -12,6 +14,8 @@ export default {
     initTools(view, layer, datUi) {
         layer.debugUI = datUi.addFolder(`${layer.id}`);
 
+        layer.debugUI.add(layer, 'mode', MODE).name('Display mode')
+            .onChange(() => view.notifyChange(true));
         layer.debugUI.add(layer, 'sseThreshold').name('SSE threshold')
             .onChange(() => view.notifyChange(true));
         layer.debugUI.add(layer, 'octreeDepthLimit', -1, 20).name('Depth limit')
