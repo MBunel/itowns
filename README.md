@@ -67,6 +67,8 @@ See the [feature list wiki page](https://github.com/iTowns/itowns/wiki/Supported
 
 If you want to run tests you'll need to install [puppeteer](https://github.com/GoogleChrome/puppeteer).
 
+If you install pupperter behind proxy, use HTTP_PROXY, HTTPS_PROXY, NO_PROXY to defines HTTP proxy settings that are used to download and run Chromium.
+
 If puppeteer fails to download Chrome, you can try with the [documented environment variables](https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#environment-variables).
 Or you can download it manually, and then:
 - install puppeteer without downloading Chrome: `PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1 npm install puppeteer`
