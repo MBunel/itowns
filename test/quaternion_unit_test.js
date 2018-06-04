@@ -6,10 +6,23 @@ import Quaternion from '../src/Renderer/ThreeExtended/Quaternion';
 
 describe('Quaternion', function () {
     it('should compute imprecise Quaternion.slerp with close values', () => {
-        const A = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI * 0.3330);
-        const B = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI * 0.33299999);
-        const R = A.clone().preciseSlerp(B, 0.00001);
-        const O = A.clone().slerp(B, 0.00001);
+        const angleA = Math.PI * 0.3330;
+        const angleB = Math.PI * 0.3329;
+        const A = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), angleA);
+        const B = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), angleB);
+
+        const slerp = 0.25;
+        const R = A.clone().preciseSlerp(B, slerp);
+        const O = A.clone().slerp(B, slerp);
+
+        const F = new THREE.Euler().setFromQuaternion(R);
+        const S = new THREE.Euler().setFromQuaternion(O);
+
+        const result = (angleA * (1 - slerp)) + (angleB * (slerp));
+        // eslint-disable-next-line
+        console.log('Diff result with precise  : ', result - F.z, 'in degree, ', Math.sin(result - F.z) * 6378137, ' in meters on globe');
+        // eslint-disable-next-line
+        console.log('Diff result with original : ', result - S.z, 'in degree, ', Math.sin(result - S.z) * 6378137, ' in meters on globe');
 
         assert.notEqual(R.z, O.z);
         assert.notEqual(R.w, O.w);
