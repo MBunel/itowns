@@ -439,10 +439,7 @@ function PlanarControls(view, options = {}) {
         const pointUnderCursor = new THREE.Vector3();
 
         // check if there is valid geometry under cursor
-        if (typeof this.view.getPickingPositionFromDepth(mousePosition) !== 'undefined') {
-            pointUnderCursor.copy(this.view.getPickingPositionFromDepth(mousePosition));
-        }
-        else {
+        if (typeof this.view.getPickingPositionFromDepth(mousePosition, pointUnderCursor) === 'undefined') {
             return;
         }
 

@@ -185,10 +185,17 @@ PlanarView.prototype.readDepthBuffer = function readDepthBuffer(x, y, width, hei
 
 const matrix = new THREE.Matrix4();
 const screen = new THREE.Vector2();
-const pickWorldPosition = new THREE.Vector3();
 const ray = new THREE.Ray();
 const direction = new THREE.Vector3();
-PlanarView.prototype.getPickingPositionFromDepth = function getPickingPositionFromDepth(mouse) {
+
+/**
+ * returns the pick position under the mouse
+ *
+ * @param      {THREE.Vector2}  mouse   mouse coordinates to pick position
+ * @param      {THREE.Vector3}  target optional Vector3 target. the result will be copied into this Vector3. If not present a new one will be created
+ * @return     {THREE.Vector3}  The picking position
+ */
+PlanarView.prototype.getPickingPositionFromDepth = function getPickingPositionFromDepth(mouse, target = new THREE.Vector3()) {
     const l = this.mainLoop;
     const viewPaused = l.scheduler.commandsWaitingExecutionCount() == 0 && l.renderingState == RENDERING_PAUSED;
     const g = l.gfxEngine;
@@ -234,14 +241,14 @@ PlanarView.prototype.getPickingPositionFromDepth = function getPickingPositionFr
     const orthoZ = g.depthBufferRGBAValueToOrthoZ(buffer, camera);
     const length = orthoZ / Math.cos(angle);
 
-    pickWorldPosition.addVectors(camera.position, ray.direction.setLength(length));
+    target.addVectors(camera.position, ray.direction.setLength(length));
 
     camera.layers.mask = prev;
 
-    if (pickWorldPosition.length() > 10000000)
+    if (target.length() > 10000000)
         { return undefined; }
 
-    return pickWorldPosition;
+    return target;
 };
 
 export default PlanarView;
