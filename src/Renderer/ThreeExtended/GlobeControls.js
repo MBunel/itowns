@@ -117,7 +117,7 @@ var lastTimeMouseMove = 0;
 var dampingMoveAnimatedExpression = (function getDampMoveAniExprFn() {
     const damp = new THREE.Quaternion(0, 0, 0, 1);
     return function dampingMoveAnimatedExpression(root) {
-        root.qDelta.presiceSlerp(damp, root.dampingFactor * 0.2);
+        root.qDelta.preciseSlerp(damp, root.dampingFactor * 0.2);
         root.quatGlobe.multiply(root.qDelta);
     };
 }());
@@ -148,7 +148,7 @@ function zoomCenterAnimatedExpression(root, progress) {
     // Rotation
     root.quatGlobe.set(0, 0, 0, 1);
     root.progress = 1 - Math.pow((1 - (Math.sin((progress - 0.5) * Math.PI) * 0.5 + 0.5)), 2);
-    root.quatGlobe.presiceSlerp(root.qDelta, root.progress);
+    root.quatGlobe.preciseSlerp(root.qDelta, root.progress);
     // clamp
     clampToGround(root);
 }

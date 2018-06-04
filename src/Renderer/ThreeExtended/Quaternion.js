@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
-if (!THREE.Quaternion.prototype.presiceSlerp) {
-    THREE.Quaternion.prototype.presiceSlerp = function _presiceSlerp(qb, t) {
+if (!THREE.Quaternion.prototype.preciseSlerp) {
+    THREE.Quaternion.prototype.preciseSlerp = function _preciseSlerp(qb, t) {
         if (t === 0) {
             return this;
         }
