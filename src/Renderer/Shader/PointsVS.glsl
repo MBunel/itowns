@@ -30,7 +30,7 @@ varying vec4 vColor;
 // and implementation in PotreeConverter (BINPointReader.cpp) and potree (BinaryDecoderWorker.js)
 #if defined(NORMAL_OCT16)
 vec3 decodeOct16Normal(vec2 encodedNormal) {
-    vec2 nNorm = encodedNormal * 255. / 2. - 1.;
+    vec2 nNorm = 2. * (encodedNormal / 255.) - 1.;
     vec3 n;
     n.z = 1. - abs(nNorm.x) - abs(nNorm.y);
     if (n.z >= 0.) {
