@@ -9,8 +9,6 @@ export const MODE = {
     INTENSITY: 2,
     CLASSIFICATION: 3,
     NORMAL: 4,
-    NORMAL_OCT16: 5,
-    NORMAL_SPHEREMAPPED: 6,
 };
 
 class PointsMaterial extends RawShaderMaterial {
@@ -21,16 +19,20 @@ class PointsMaterial extends RawShaderMaterial {
         this.scale = 0.05 * 0.5 / Math.tan(1.0 / 2.0); // autosizing scale
         this.oldMode = null;
 
+        for (const key in MODE) {
+            if (Object.prototype.hasOwnProperty.call(MODE, key)) {
+                this.defines[`MODE_${key}`] = MODE[key];
+            }
+        }
+
         this.uniforms.size = new Uniform(size);
         this.uniforms.mode = new Uniform(mode);
         this.uniforms.opacity = new Uniform(1.0);
         this.uniforms.overlayColor = new Uniform(new Vector4(0, 0, 0, 0));
 
         if (Capabilities.isLogDepthBufferSupported()) {
-            this.defines = {
-                USE_LOGDEPTHBUF: 1,
-                USE_LOGDEPTHBUF_EXT: 1,
-            };
+            this.defines.USE_LOGDEPTHBUF = 1;
+            this.defines.USE_LOGDEPTHBUF_EXT = 1;
         }
 
         if (__DEBUG__) {

@@ -3,14 +3,6 @@ precision highp int;
 
 #include <logdepthbuf_pars_vertex>
 #define EPSILON 1e-6
-// see PointsMaterial.js
-#define MODE_COLOR 0
-#define MODE_PICKING 1
-#define MODE_INTENSITY 2
-#define MODE_CLASSIFICATION 3
-#define MODE_NORMAL 4
-#define MODE_NORMAL_OCT16 5
-#define MODE_NORMAL_SPHEREMAPPED 6
 
 attribute vec3 position;
 uniform mat4 projectionMatrix;
@@ -23,14 +15,20 @@ uniform vec4 overlayColor;
 attribute vec3 color;
 attribute vec4 unique_id;
 attribute float intensity;
-attribute vec4 normal;
-attribute vec2 sphereMappedNormal;
+
+#if defined(NORMAL_OCT16)
 attribute vec2 oct16Normal;
+#elif defined(NORMAL_SPHEREMAPPED)
+attribute vec2 sphereMappedNormal;
+#else
+attribute vec3 normal;
+#endif
 
 varying vec4 vColor;
 
 // see https://web.archive.org/web/20150303053317/http://lgdv.cs.fau.de/get/1602
 // and implementation in PotreeConverter (BINPointReader.cpp) and potree (BinaryDecoderWorker.js)
+#if defined(NORMAL_OCT16)
 vec3 decodeOct16Normal(vec2 encodedNormal) {
     vec2 nNorm = encodedNormal * 255. / 2. - 1.;
     vec3 n;
@@ -44,7 +42,7 @@ vec3 decodeOct16Normal(vec2 encodedNormal) {
     }
     return normalize(n);
 }
-
+#elif defined(NORMAL_SPHEREMAPPED)
 // see http://aras-p.info/texts/CompactNormalStorage.html method #4
 // or see potree's implementation in BINPointReader.cpp
 vec3 decodeSphereMappedNormal(vec2 encodedNormal) {
@@ -56,18 +54,24 @@ vec3 decodeSphereMappedNormal(vec2 encodedNormal) {
     n.z = 1. - 2. * f;
     return n;
 }
+#endif
 
 void main() {
     if (mode == MODE_PICKING) {
         vColor = unique_id;
     } else if (mode == MODE_INTENSITY) {
-        vColor = vec4(intensity, intensity, intensity, 1.0);
+        vColor = vec4(intensity, intensity, intensity, opacity);
     } else if (mode == MODE_NORMAL) {
-        vColor = normal;
-    } else if (mode == MODE_NORMAL_OCT16) {
-        vColor = vec4(decodeOct16Normal(oct16Normal), 1.0);
-    } else if (mode == MODE_NORMAL_SPHEREMAPPED) {
-        vColor = vec4(decodeSphereMappedNormal(sphereMappedNormal), 1.0);
+#if defined(NORMAL_OCT16)
+        vColor = vec4(abs(decodeOct16Normal(oct16Normal)), opacity);
+#elif defined(NORMAL_SPHEREMAPPED)
+        vColor = vec4(abs(decodeSphereMappedNormal(sphereMappedNormal)), opacity);
+#elif defined(NORMAL)
+        vColor = vec4(abs(normal), opacity);
+#else
+        // default to color
+        vColor = vec4(mix(color, overlayColor.rgb, overlayColor.a), opacity);
+#endif
     } else {
         // default to color mode
         vColor = vec4(mix(color, overlayColor.rgb, overlayColor.a), opacity);

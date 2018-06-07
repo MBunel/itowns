@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import PointsMaterial from '../Renderer/PointsMaterial';
+import PointsMaterial, { NORMAL_MODE } from '../Renderer/PointsMaterial';
 
 // See the different constants holding ordinal, name, numElements, byteSize in PointAttributes.cpp in PotreeConverter
 // elementByteSize is byteSize / numElements
@@ -107,7 +107,13 @@ export default {
 
         geometry.computeBoundingBox();
 
+
         const material = new PointsMaterial();
+        const normal = pointAttributes.find(elem => elem.startsWith('NORMAL'));
+        if (normal) {
+            material.defines[normal] = 1;
+        }
+
         const points = new THREE.Points(geometry, material);
 
         points.frustumCulled = false;
