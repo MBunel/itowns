@@ -77,24 +77,25 @@ export default {
         // get the variable attributes
         for (const potreeName of pointAttributes) {
             const attr = POINT_ATTTRIBUTES[potreeName];
+            const numByte = attr.numByte || attr.arrayType.BYTES_PER_ELEMENT;
             attrs.push({
                 potreeName,
                 numElements: attr.numElements,
                 attributeName: attr.attributeName,
                 normalized: attr.normalized,
                 array: new attr.arrayType(attr.numElements * numPoints),
-                numByte: attr.numByte,
+                numByte,
+                // Potree stores everything as int, and uses scale + offset
+                fnName: `getUint${numByte * 8}`,
             });
         }
 
         let offset = 0;
         for (let pntIdx = 0; pntIdx < numPoints; pntIdx++) {
             for (const attr of attrs) {
-                const fnName = `getUint${(attr.numByte || attr.array.BYTES_PER_ELEMENT) * 8}`;
                 for (let elemIdx = 0; elemIdx < attr.numElements; elemIdx++) {
-                    attr.array[pntIdx * attr.numElements + elemIdx] = view[fnName](offset, true);
-
-                    offset += (attr.numByte || attr.array.BYTES_PER_ELEMENT);
+                    attr.array[pntIdx * attr.numElements + elemIdx] = view[attr.fnName](offset, true);
+                    offset += attr.numByte;
                 }
             }
         }

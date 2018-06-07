@@ -42,8 +42,10 @@ class PointsMaterial extends RawShaderMaterial {
         // we don't want pixels to blend over already drawn pixels
         this.blending = pickingMode ? NoBlending : NormalBlending;
         if (pickingMode) {
-            this.oldMode = this.uniforms.mode.value;
-            this.uniforms.mode.value = MODE.PICKING;
+            if (this.uniforms.mode.value !== MODE.PICKING) {
+                this.oldMode = this.uniforms.mode.value;
+                this.uniforms.mode.value = MODE.PICKING;
+            }
         } else {
             this.uniforms.mode.value = this.oldMode || this.uniforms.mode.value;
             this.oldMode = null;
