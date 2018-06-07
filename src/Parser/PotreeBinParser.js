@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import PointsMaterial, { NORMAL_MODE } from '../Renderer/PointsMaterial';
+import PointsMaterial from '../Renderer/PointsMaterial';
 
 // See the different constants holding ordinal, name, numElements, byteSize in PointAttributes.cpp in PotreeConverter
 // elementByteSize is byteSize / numElements
